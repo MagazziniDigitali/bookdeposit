@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block body %}
+ 
+<script type="text/javascript">
+window.addEventListener("DOMContentLoaded", function() {
+  $
+    .ajax({
+      url: "/api/v1/status/{{ uuid }}",
+      type: "GET",
+      headers: { Authorization: "Bearer {{ session.jwt_token }}" }
+    })
+    .done(function(data) {
+      console.log(data);
+
+      if (data.status == "SUCCESS") {
+        data.badge = "success";
+        data.badge_label = "VALID";
+        data.download_icon = "visible";
+      } else if (data.status == "FAILURE") {
+        data.badge = "danger";
+        data.badge_label = "INVALID";
+        data.download_icon = "hidden";
+      } else if (data.status == "QUEUE") {
+        data.badge = "warning";
+        data.badge_label = "QUEUE";
+        data.download_icon = "hidden";
+      } 
+
+      var template = $("#template").html();
+      Mustache.parse(template);
+      var rendered = Mustache.render(template, data);
+      $("#detail").append(rendered);
+    })
+    .fail(function(data) {
+      if (data.status == "401") {
+        window.location.replace("/logout");
+      }
+    });
+});
+
+</script>
+
+
+<script id="template" type="x-tmpl-mustache">
+{% raw %}
+  <tr><td></td><td><span class="badge badge-{{ badge }}">{{ badge_label }}</span></td></tr>
+  <tr><td> id </td><td><b>{{ bag_uuid }}</b>&nbsp;&nbsp;<a href="/api/v1/download/{{ bag_uuid }}.tar"><i class="fa fa-download" aria-hidden="true" style="visibility: {{ download_icon }};"></i></a></td></tr>
+  <tr><td> nome </td><td><b>{{ bag_name }}</b></td></tr>
+  <tr><td> data </td><td><b>{{ date }}</b></td></tr>
+  {{#errors}}
+  <tr><td> errori </td><td><b>{{ errors }}</b></td></tr>
+  {{/errors}}
+
+{% endraw %}
+</script>
+
+
+<table id="detail" class="table table-sm table-bordered">
+  
+</table>
+
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block body %}
+ 
+<!-- <script src="{{ url_for('static', filename='js/list.js') }}"  defer='defer'></script> -->
+
+<script type="text/javascript">
+window.addEventListener("DOMContentLoaded", function() {
+  (function($) {
+    $(document).ready(function() {
+      $.ajax({
+        url: "/api/v1/list",
+        type: "GET",
+        headers: { Authorization: "Bearer {{ session.jwt_token }}" }
+      }).done(function(data) {
+        $.each(data, function() {
+          if (this.status == "SUCCESS") {
+            this.badge = "success";
+            this.badge_label = "VALID";
+          } else if (this.status == "FAILURE") {
+            this.badge = "danger";
+            this.badge_label = "INVALID";
+          } else if (this.status == "QUEUE") {
+            this.badge = "warning";
+            this.badge_label = "QUEUE";
+          } 
+
+          this.fmtDate = this.date.substr(0, 10);
+          this.fmtTime = this.date.substr(11, 5);
+
+          var template = $("#template").html();
+          Mustache.parse(template);
+          var rendered = Mustache.render(template, this);
+          $("#deposit_list").append(rendered);
+        });
+      })
+      .fail(function(data) {
+        if (data.status =="401"){
+          window.location.replace("/logout");
+        }
+      });
+    });
+  })(jQuery);
+});
+
+</script>
+
+<script id="template" type="x-tmpl-mustache">
+{% raw %}
+	<tr>
+	<td><a href="/status/{{ bag_uuid }}">{{ bag_uuid }}</a></td>
+	<td>{{ bag_name }}</td>
+	<td><small>{{ fmtDate }} {{ fmtTime }}</small></td>
+	<td><span class="badge badge-{{ badge }}">{{ badge_label }}</span></td>
+	</tr>
+{% endraw %}
+</script>
+
+<br/>
+
+<!-- <div class="row"> -->
+	<table id="deposit_list" class="table table-sm table-bordered">
+	<thead class="thead-inverse">
+	    <tr>
+	      <th>bag id</th>
+	      <th>original name</th>
+	      <th>date</th>
+	      <th>status</th>
+
+	    </tr>
+    </thead>
+	</table>
+<!-- </div> -->
+
+
+{% endblock %}

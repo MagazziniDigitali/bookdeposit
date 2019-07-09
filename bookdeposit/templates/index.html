@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="jumbotron">
+    <h1 class="display-3">Book Deposit</h1>
+    <p class="lead">Deposito di pubblicazioni digitali</p>
+    {% if not session.logged_in %}
+    <p><a class="btn btn-lg btn-success" href="/login" role="button">Login</a></p>
+    {% endif %}
+</div>
+
+
+
+{% endblock %}

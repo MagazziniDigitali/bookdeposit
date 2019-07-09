@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block body %}
+ 
+ <div class="form-group">
+    <form>
+    <label for=""></label>
+    <input type="file" class="form-control-file" name="bagit" id="bagit" placeholder="" aria-describedby="fileHelpId" accept=".zip, application/zip">
+    <small id="fileHelpId" class="form-text text-muted">Selezionare un file bagit compresso, formato .zip</small>
+    <button id="submit" type="submit" class="btn btn-primary" disabled>Invia</button>
+  <form>
+</div>
+
+<div id="progressbar"></div>
+ 
+
+<div id="result" style="visibility: hidden;"></div>
+
+<script type="text/javascript">
+window.addEventListener("DOMContentLoaded", function() {
+  var objFormData;
+
+  $("input:file").change(function(objEvent) {
+    objFormData = new FormData();
+    var objFile = $(this)[0].files[0];
+    objFormData.append("bag", objFile);
+    $("#submit").prop("disabled", false);
+  });
+
+  $("#submit").click(function(e) {
+    e.preventDefault();
+
+    $.ajax({
+      xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener(
+          "progress",
+          function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = Math.floor((evt.loaded / evt.total)*100);
+              $("#progressbar").progressbar({value: percentComplete});
+            }
+          },
+          false
+        );
+        return xhr;
+      },
+      url: "/api/v1/upload",
+      type: "POST",
+      headers: { Authorization: "Bearer {{ session.jwt_token }}" },
+      contentType: false,
+      data: objFormData,
+      processData: false
+    }).done(function(data) {
+      console.log(data);
+      $(".form-group").hide();
+      $("#result").css("visibility", "visible");
+      $("#result").append("caricamento eseguito. id: <b>" + data.job + "</b>");
+    });
+  });
+});
+
+</script>
+
+
+{% endblock %}

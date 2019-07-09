@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Deposito Legale - Book</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+        crossorigin="anonymous">
+   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">Deposito Legale - Digital Books</a>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('documentation') }}">Documentazione</a>
+          </li>
+
+          {% if session.logged_in %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('list') }}">List</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('upload') }}">Upload</a>
+          </li>
+          {% endif %}
+
+          </ul>
+          <ul class="navbar-nav navbar-right">
+            <li class="nav-item pull-right">
+            {% if not session.logged_in %}
+            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <div class="container">
+
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+    
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted"> <img src="{{ url_for('static', filename='logo-bncf.jpg') }}"></span>
+      </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/node_modules/mustache/mustache.min.js') }}"></script>
+
+</body>
+
+</html>

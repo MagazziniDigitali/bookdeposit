@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form class="form-signin" action="{{ url_for('login') }}" method=post>
+    <h2 class="form-signin-heading"></h2><br/><br/>
+    <label for="inputEmail" class="sr-only">Username</label>
+    <input type="text" name=username id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name=password id="inputPassword" class="form-control" placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Entra</button>
+    </form>
+
+<div class="row">    
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+</div>
+
+{% endblock %}
